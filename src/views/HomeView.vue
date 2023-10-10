@@ -1,20 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="Generate Laporan" width="40%">
-    <span>Apakah Anda yakin ingin Generate Perubahan Laporan ?</span>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button>Batal</el-button>
-        <el-button type="primary">
-          Lihat Data
-        </el-button>
-        <el-button type="primary">
-          OK
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
   <div class="flex items-center justify-center w-full bg-gray-900 h-screen">
-    <el-button @click="dialogVisible = true"></el-button>
     <el-row class="w-full px-40">
       <el-col :span="6" class="w-full bg-white p-10 rounded-lg mr-10">
         <el-form :model="formState" :rules="formRules" label-position="top" status-icon>
@@ -77,7 +62,6 @@ import { ref, reactive, onMounted } from 'vue'
 
 // const tableData = ref([])
 
-const dialogVisible = ref(false)
 const formRules = reactive({
 
 })
@@ -142,13 +126,13 @@ const handleSubmit = () => {
   // })
 }
 
-// onMounted(async () => {
-//   await runAuth({
-//     username: 'admin',
-//     password: 'admin',
-//   })
-//   setTimeout(async () => {
-//     await fetchData(dataAuth.value.accessToken)
-//   }, 1000);
-// })
+onMounted(async () => {
+  await runAuth({
+    username: 'admin',
+    password: 'admin',
+  })
+  setTimeout(async () => {
+    await fetchData(dataAuth.value.accessToken)
+  }, 1000);
+})
 </script>
