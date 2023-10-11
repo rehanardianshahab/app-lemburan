@@ -30,6 +30,7 @@
         </el-form>
       </el-col>
       <el-col :span="17" class=" bg-white p-10 rounded-lg">
+        <el-button @click="handleLogout">Logout</el-button>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="tanggal" label="Tanggal" min-width="300px">
             <template #default="scope">
@@ -38,6 +39,11 @@
           </el-table-column>
           <el-table-column prop="jam_mulai" label="Waktu Mulai" min-width="300px" />
           <el-table-column prop="jam_selesai" label="Waktu Selesai" min-width="300px" />
+          <el-table-column label="Jumlah Waktu" min-width="300px">
+            <template #default="scope">
+              {{ workCounter(scope.row, scope.$index) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="tentang" label="Tentang" min-width="300px" />
           <el-table-column prop="alasan" label="Alasan" min-width="300px" />
         </el-table>
@@ -53,15 +59,20 @@
 import dayjs from 'dayjs'
 import service from '@/services/lemburan'
 import serviceAuth from '@/services/auth'
+import auth from '@/utils/auth'
+
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useRequest } from 'vue-request'
 
 import {
   Document
 } from '@element-plus/icons-vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 
 // const tableData = ref([])
 
+const router = useRouter()
 const formRules = reactive({
 
 })
@@ -89,17 +100,42 @@ const handleWorkCount = () => {
   return result + ' Jam' + (result > 5 ? ' (Maksimal 5 Jam)' : '')
 }
 
+const workCounter = (scope, index) => {
+  const mulaiTb = `${scope.tanggal}
+                        ${scope.jam_mulai}`
+  const minusDateTb = `${dayjs(scope.tanggal).add(1, 'd').format('YYYY-MM-DD')} ${scope.jam_selesai}`
+  const tempSelesaiTb = `${scope.tanggal} ${scope.jam_selesai}`
+  let selesaiTb = null
+  if (dayjs(tempSelesaiTb).diff(dayjs(mulaiTb), 'h', true) < 0) {
+    selesaiTb = minusDateTb
+  } else {
+    selesaiTb = tempSelesaiTb
+  }
+  const resultTb = dayjs(selesaiTb).diff(dayjs(mulaiTb), 'h', true)
+  return resultTb + ' Jam'
+}
+
 const { data: tableData, loading: loadingFetch, run: fetchData } = useRequest(service.getData, {
   manual: true,
+  onError: (e) => {
+    if (e.response.data.message == 'No token provided!') {
+      router.push('/')
+      ElMessage({
+        type: 'error',
+        message: 'Session Ended'
+      })
+    }
+  }
 })
 
 const { data, loading, run } = useRequest(service.saveData, {
   manual: true,
-  onSuccess: () => {
-    // ElMessage({
-    //   message: 'Berhasil Menambahkan',
-    //   type: 'success'
-    // })
+  onSuccess: async () => {
+    ElMessage({
+      message: 'Berhasil Menambahkan',
+      type: 'success'
+    })
+    await fetchData(auth.getCookies('token'))
   }
 })
 
@@ -107,10 +143,14 @@ const { data: dataAuth, loading: loadingAuth, run: runAuth } = useRequest(servic
   manual: true,
 })
 
+const handleLogout = () => {
+  router.push('/')
+  return auth.deleteCookies()
+}
 
 const handleSubmit = () => {
-  run(dataAuth.value.accessToken, {
-    user_id: dataAuth.value.id,
+  run(auth.getCookies('token'), {
+    user_id: auth.getCookies('id'),
     tanggal: formState.value.tanggal,
     jam_mulai: formState.value.waktu_mulai,
     jam_selesai: formState.value.waktu_selesai,
@@ -127,12 +167,6 @@ const handleSubmit = () => {
 }
 
 onMounted(async () => {
-  await runAuth({
-    username: 'admin',
-    password: 'admin',
-  })
-  setTimeout(async () => {
-    await fetchData(dataAuth.value.accessToken)
-  }, 1000);
+  await fetchData(auth.getCookies('token'))
 })
 </script>
