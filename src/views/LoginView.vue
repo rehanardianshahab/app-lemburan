@@ -19,6 +19,7 @@
 
 <script setup>
 import serviceAuth from '@/services/auth'
+import auth from '@/utils/auth'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ref, reactive, onMounted } from 'vue'
@@ -59,7 +60,7 @@ const { data: dataAuth, loading: loadingAuth, run: runAuth } = useRequest(servic
     onError: (e) => {
         ElMessage({
             type: 'error',
-            message: 'Login failed' + e,
+            message: 'Login failed ' + e,
         })
     }
 })
@@ -79,4 +80,11 @@ const handleSubmit = async () => {
         }
     })
 }
+
+onMounted(() => {
+    if (auth.getCookies('token')) {
+        router.push('/dashboard')
+        return
+    }
+})
 </script>
