@@ -51,13 +51,13 @@
           </el-table-column>
           <el-table-column label="Jumlah Waktu" min-width="150px" align="center">
             <template #default="scope">
-              {{ workCounter(scope.row, scope.$index) }} Jam
+              {{ workCounter(scope.row) }} Jam
             </template>
           </el-table-column>
           <el-table-column label="Uang Lembur" min-width="150px" align="center">
             <template #default="scope">
-              Rp. {{ (workCounter(scope.row, scope.$index) <= 5 ? workCounter(scope.row, scope.$index) * 20000 : 5 *
-                20000).toLocaleString("id-ID") }} </template>
+              Rp. {{ (workCounter(scope.row) <= 5 ? workCounter(scope.row) * 20000 : 5 * 20000).toLocaleString("id-ID") }}
+                </template>
           </el-table-column>
           <el-table-column prop="alasan" label="Alasan" min-width="300px" show-overflow-tooltip />
         </el-table>
@@ -117,7 +117,7 @@ const handleWorkCount = () => {
   return result + ' Jam' + (result > 5 ? ' (Maksimal 5 Jam)' : '')
 }
 
-const workCounter = (scope, index) => {
+const workCounter = (scope) => {
   const mulaiTb = `${dayjs(scope.tanggal).format('YYYY-MM-DD')} ${scope.jam_mulai}`
   const minusDateTb = `${dayjs(scope.tanggal).add(1, 'd').format('YYYY-MM-DD')} ${scope.jam_selesai}`
   let selesaiTb = null
