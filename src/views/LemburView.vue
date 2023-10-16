@@ -151,6 +151,13 @@ const { data, loading, run } = useRequest(service.saveData, {
       message: 'Data Lemburan Berhasil Dibuat',
       type: 'success'
     })
+    formState.value = {
+      tanggal: dayjs().format('YYYY-MM-DD'),
+      waktu_mulai: '00:00',
+      waktu_selesai: '01:00',
+      tentang: '',
+      alasan: ''
+    }
     await fetchData(auth.getCookies('token'))
   },
   onError: (e) => {

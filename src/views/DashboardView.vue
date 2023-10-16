@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-screen flex items-center justify-center bg-blue-200">
+    <div class="w-full h-screen flex items-center justify-center bg-gray-900">
         <div class="w-3/4 flex <lg:flex-col lg:space-x-4 <lg:space-y-4">
             <el-card class="w-3/4 <lg:w-full rounded-lg">
                 <div class="flex <lg:flex-col lg:space-x-4 <lg:space-y-4">
@@ -16,9 +16,11 @@
             </el-card>
             <el-card class="w-1/4 <lg:w-full rounded-lg flex items-center">
                 <div>
-                    <h2 class="semibold text-gray-500 font-semibold">Total Uang Lembur</h2>
-                    <p class="text-green-500 text-3xl font-bold mt-2">Rp. {{ totalUang.toLocaleString("id-ID") }}</p>
-                    <p class="text-gray-500 font-bold mt-2">Bulan {{ dayjs().format('MMMM') }}</p>
+                    <h2 class="semibold text-gray-500 font-semibold">Penghasilan Lembur</h2>
+                    <p class="text-green-500 text-3xl font-bold mt-2">Rp. {{ totalUang.toLocaleString("id-ID") }}
+                        <span class="text-sm text-gray-500 font-bold mt-2">{{ dayjs().format('MMMM') }}</span>
+                    </p>
+
                 </div>
             </el-card>
         </div>
