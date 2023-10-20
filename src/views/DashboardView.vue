@@ -77,10 +77,9 @@ const totalUang = ref(0)
 const { data: tableData, loading: loadingFetch, run: fetchData } = useRequest(service.getData, {
     manual: true,
     onSuccess: (res) => {
-        res.filter(data => dayjs(data.tanggal).format('YYYY-MM') == dayjs().format('YYYY-MM'))
-            .find(data => {
-                totalUang.value += workCounter(data) < 5 ? workCounter(data) : 5
-            })
+        res.find(data => {
+            totalUang.value += workCounter(data) < 5 ? workCounter(data) : 5
+        })
         totalUang.value = totalUang.value * 20000
     },
     onError: (e) => {
